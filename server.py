@@ -51,5 +51,6 @@ def world():
 
 
 if __name__ == "__main__":
-    context = ('/etc/secrets/server.crt', '/etc/secrets/server.key')
-    app.run(host = '0.0.0.0', ssl_context=context)
+    #context = ('/etc/secrets/server.crt', '/etc/secrets/server.key')
+    #app.run(host = '0.0.0.0', ssl_context=context)
+    app.run(host = '0.0.0.0')
