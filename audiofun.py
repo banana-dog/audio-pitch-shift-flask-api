@@ -1,4 +1,3 @@
-import pyaudio
 import wave
 import numpy as np
 
@@ -46,23 +45,9 @@ def high_pass(data, proportion=0.75):
     f[: int(data.shape[0] * proportion)] = 0
     return np.fft.ifft(f)
 
-FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
 CHUNK = 204800  # work with one huge chunk
-audio = pyaudio.PyAudio()
-
-
-def play_audio(audio):
-    p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16, channels=CHANNELS, rate=RATE, output=True)
-    sound = audio.astype(np.int16).tostring()
-    stream.write(sound)
-
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-
 
 def read_file(fname="file.wav"):
     # https://stackoverflow.com/a/71042208
@@ -75,29 +60,10 @@ def read_file(fname="file.wav"):
         return interleaved # np.reshape(interleaved, (-1, f.getnchannels()))
 
 
-def record():
-    stream = audio.open(
-        format=FORMAT,
-        channels=CHANNELS,
-        rate=RATE,
-        input=True,
-        frames_per_buffer=CHUNK,
-    )
-
-    data = stream.read(CHUNK)
-    data = np.fromstring(data, dtype=np.int16)
-
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
-    return data
-
-
 def save(data, fname="file.wav"):
     waveFile = wave.open(fname, "wb")
     waveFile.setnchannels(CHANNELS)
-    waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+    waveFile.setsampwidth(2)
     waveFile.setframerate(RATE)
     waveFile.writeframes(b"".join(data.astype(np.int16)))
     waveFile.close()
