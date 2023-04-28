@@ -4,12 +4,12 @@ from base64 import b64decode
 import os
 from audiofun import pitch_shift, read_file, high_pass, save
 import numpy as np
-# from flask_cors import CORS
+from flask_cors import CORS
 from flask import send_file
 
 app = Flask(__name__)
 
-# CORS(app, support_credentials=True)
+CORS(app, support_credentials=True)
 
 
 @app.route("/", methods=["GET"])
