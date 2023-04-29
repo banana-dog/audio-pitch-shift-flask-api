@@ -1,3 +1,4 @@
 Flask
 numpy
 Gunicorn
+flask_cors
