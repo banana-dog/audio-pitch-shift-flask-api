@@ -48,4 +48,4 @@ def world():
         np.pad(p, (0, data.shape[0] - p.shape[0])).astype("int16") for p in pitches
     ]
     save(sum(pitches), new_file_name)
-    return {"name": "https://banana-dog.github.io/pitch/" + new_file_name}, 200
+    return {"name": "https://audio-pitch-shift.onrender.com/" + new_file_name}, 200
