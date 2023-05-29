@@ -4,7 +4,6 @@ from base64 import b64decode
 from audiofun import pitch_shift, save
 from flask_cors import CORS
 from flask import send_file
-from io import BytesIO
 import soundfile as sf
 import librosa
 
@@ -28,8 +27,7 @@ def prepare_file():
     audio: str = request.json["audio"]
     i = audio.find(",") + 1
     ogg = b64decode(audio[i:])
-    byte_stream = BytesIO(ogg)
-    audio_data, sr1 = sf.read(byte_stream)
+    audio_data, sr1 = sf.read(ogg)
     
     pitches = []
     if request.json["isActive"]:
