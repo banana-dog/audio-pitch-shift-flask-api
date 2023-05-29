@@ -30,7 +30,7 @@ def prepare_file():
     with open ("input.ogg", "wb") as f:
         f.write(ogg)
          
-    audio_data, sr1 = librosa.read("input.ogg")
+    audio_data, sr1 = librosa.load("input.ogg")
     
     pitches = []
     if request.json["isActive"]:
