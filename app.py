@@ -27,7 +27,10 @@ def prepare_file():
     audio: str = request.json["audio"]
     i = audio.find(",") + 1
     ogg = b64decode(audio[i:])
-    audio_data, sr1 = sf.read(ogg)
+    with open ("input.ogg", "wb") as f:
+        f.write(ogg)
+         
+    audio_data, sr1 = librosa.read("input.ogg")
     
     pitches = []
     if request.json["isActive"]:
