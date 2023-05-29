@@ -1,22 +1,19 @@
 from flask import Flask
 from flask import request
 from base64 import b64decode
-import os
-from audiofun import pitch_shift, read_file, high_pass, save
-import numpy as np
+from audiofun import pitch_shift, save
 from flask_cors import CORS
 from flask import send_file
+from io import BytesIO
+import librosa
 
 app = Flask(__name__)
 
 CORS(app, support_credentials=True)
 
-
 @app.route("/", methods=["GET"])
 def hello():
-    return "!!"
-    with open("index.html", "r") as f:
-        return f.read()
+    return "\u0422\u0415\u0411\u0415\u0020\u0421\u042e\u0414\u0410\u0020\u041d\u0415\u041b\u042c\u0417\u042f\u0021\u0021\u0021"
 
 
 @app.route("/new_sound.wav", methods=["GET"])
@@ -25,27 +22,20 @@ def return_sound():
 
 
 @app.route("/audio/", methods=["POST"])
-def world():
-    file_name = "sound.ogg"
+def prepare_file():
     new_file_name = "new_sound.wav"
     audio: str = request.json["audio"]
     i = audio.find(",") + 1
     ogg = b64decode(audio[i:])
-    with open(file_name, "wb") as f:
-        f.write(ogg)
-    cmd = f"ffmpeg -y -i {file_name} -map 0 -map -0:s? -c:v copy -ac 2 -ar 44100 -vn {new_file_name}"
-
-    os.system(cmd)
-    data = high_pass(read_file(new_file_name))
-
+    audio_data, sr1 = librosa.load(BytesIO(ogg))
+    
     pitches = []
     if request.json["isActive"]:
-        pitches.append(pitch_shift(data, request.json["pitch"]))
+        pitches.append(request.json["pitch"])
     if request.json["isActive1"]:
-        pitches.append(pitch_shift(data, request.json["pitch1"]))
+        pitches.append(request.json["pitch1"])
 
-    pitches = [
-        np.pad(p, (0, data.shape[0] - p.shape[0])).astype("int16") for p in pitches
-    ]
-    save(sum(pitches), new_file_name)
+    result = pitch_shift(audio_data, pitches, sr1)
+    save(result, new_file_name, sr1)
+    
     return {"name": "https://audio-pitch-shift.onrender.com/" + new_file_name}, 200
