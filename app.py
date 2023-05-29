@@ -28,7 +28,7 @@ def prepare_file():
     audio: str = request.json["audio"]
     i = audio.find(",") + 1
     ogg = b64decode(audio[i:])
-    byte_stream = BytesIO(ogg.read())
+    byte_stream = BytesIO(ogg)
     audio_data, sr1 = sf.read(byte_stream)
     
     pitches = []
